@@ -1,0 +1,59 @@
+---
+- hosts: default
+  become: true
+  roles:
+    - redhat-subscription
+    - rhsso
+
+  tasks:
+    - name: Install httpd
+      package:
+        name: "{{ item }}"
+        state: "latest"
+      loop:
+        - httpd 
+        - mod_ssl
+      register: install_httpd
+
+    - name: Enable httpd
+      service:
+        name: "httpd"
+        state: "stopped"
+        enabled: yes
+      when: install_httpd.changed
+
+    - name: Upload self-signed key
+      copy:
+          dest: "/etc/pki/tls/private/{{ domain_name }}.key" 
+          src: "{{ domain_name}}.key"
+          group: "apache"
+          mode: "0600"
+          owner: "apache"
+
+    - name: Upload self-signed cert
+      copy:
+          dest: "/etc/pki/tls/certs/{{ domain_name }}.crt" 
+          src: "{{ domain_name}}.crt"
+          group: "apache"
+          mode: "0600"
+          owner: "apache"
+          
+    - name: Copy template httpd file
+      template:
+        src: "rhsso.conf.j2"
+        dest: "/etc/httpd/conf.d/rhsso.conf"
+
+    - name: Enable http and https on firewall
+      firewalld:
+        service: "{{ item }}"
+        permanent: true
+        state: enabled
+      loop:
+        - http
+        - https 
+
+    - name: restart httpd
+      service:
+        name: httpd
+        state: restarted
+

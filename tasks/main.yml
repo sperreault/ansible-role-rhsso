@@ -1,0 +1,10 @@
+---
+# tasks file for ansible-role-rhsso
+  - name: Set SELinux in permissive mode
+    selinux:
+      policy: "{{ rhsso_selinux_policy }}"
+      state: "{{ rhsso_selinux_state }}"
+
+  - name: Install the rhsso packages
+    include_tasks: "install_rhsso.yml"
+    when: rhsso_enabled == true

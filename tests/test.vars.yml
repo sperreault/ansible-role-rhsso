@@ -1,0 +1,15 @@
+rhsm_activation_key: "tests"
+rhsm_org_id: "{{ lookup('env','RHN_ORG_ID') }}"
+rhsm_repos:
+  - name: '*'
+    state: absent
+  - name: rhel-7-server-rpms
+    state: present
+  - name: rhel-7-server-extras-rpms
+    state: present
+  - name: jb-eap-7.1-for-rhel-7-server-rpms
+    state: present
+  - name: rh-sso-7.2-for-rhel-7-server-rpms
+    state: present
+
+domain_name: "localhost"

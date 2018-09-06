@@ -1,0 +1,28 @@
+---
+# defaults file for ansible-role-rhsso
+rhsso_version: "7.2"
+rhsso_eap_version: "7.1"
+rhsso_admin_user: "admin"
+rhsso_admin_password: "123abc123"
+rhsso_mode: "standalone" # could be standalone-ha or domain
+# TODO: implement domain mode
+rhsso_installation_mode: "rpm" # rpm or archive
+# TODO: Implement zip/tar.gz installation
+rhsso_selinux_policy: "targeted"
+rhsso_selinux_state: "permissive"
+rhsso_enabled: true
+#
+# To be used with redhat-subscription role from https://github.com/openstack/ansible-role-redhat-subscription
+#
+rhsso_subscriptions:
+  - name: "jb-eap-{{ rhsso_eap_version }}-for-rhel-{{ ansible_distribution_major_version }}-server-rpms"
+    state: present
+  - name: "rh-sso-{{ rhsso_version }}-for-rhel-{{ ansible_distribution_major_version }}-server-rpms"
+    state: present
+rhsso_rpm_homedir: "/opt/rh/rh-sso7/root/usr/share/keycloak"
+rhsso_rpm_packages: 
+  - "@rh-sso7"
+rhsso_rpm_username: "jboss"
+rhsso_rpm_group: "jboss"
+rhsso_rpm_systemd_unit_file_src: "rpm/rhsso@.service.j2"
+rhsso_rpm_systemd_unit_file_dest: "/etc/systemd/system/rhsso@{{ rhsso_mode }}.service"

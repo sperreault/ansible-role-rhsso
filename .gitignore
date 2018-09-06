@@ -1,0 +1,6 @@
+tmp/**
+roles/**
+**/*.retry
+**/.vagrant/**
+**/venv
+tests/**/roles

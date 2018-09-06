@@ -1,0 +1,15 @@
+[Unit]
+Description=Red Hat SSO - {{ rhsso_mode }}
+After=network.target
+
+[Service]
+Type=idle
+User={{ rhsso_rpm_username }}
+Group={{ rhsso_rpm_group }}
+
+ExecStart="{{ rhsso_rpm_homedir }}/bin/{{ rhsso_mode }}.sh"
+TimeoutStartSec=600
+TimeoutStopSec=600
+
+[Install]
+WantedBy=multi-user.target

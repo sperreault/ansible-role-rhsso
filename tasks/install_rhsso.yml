@@ -1,0 +1,46 @@
+---
+  - name: Install Red Hat SSO
+    yum:
+      name: "{{ item }}"
+      state: latest
+    loop: "{{ rhsso_rpm_packages }}"
+    when: rhsso_installation_mode == "rpm"
+
+  - name: Change the permissions on rhsso_rpm_homedir
+    file:
+      dest: "{{ rhsso_rpm_homedir }}"
+      owner: "{{ rhsso_rpm_username }}"
+      group: "{{ rhsso_rpm_group }}"
+      recurse: "yes"
+      state: "directory"
+  
+  - name: Upload systemctl unit file
+    template:
+        dest: "{{ rhsso_rpm_systemd_unit_file_dest }}" 
+        src: "{{ rhsso_rpm_systemd_unit_file_src }}"
+        owner: root 
+        group: root
+        mode: "0644"
+        backup: yes
+    notify: start and enable rhsso
+
+  - name: Enable ajp on rhsso_mode
+    lineinfile:
+        path: "{{ rhsso_rpm_homedir }}/{{ rhsso_mode }}/configuration/{{ rhsso_mode }}.xml"
+        state: present 
+        insertafter: "<http-listener name" 
+        regexp: "<ajp-listener name" 
+        line: '<ajp-listener name="ajp" socket-binding="ajp"/>'
+        backup: yes
+  
+  #
+  # TODO: Not working perfectly
+  #
+  # - name: Enable x-proxy-for for ajp
+  #   lineinfile:
+  #     path: "{{ rhsso_rpm_homedir }}/{{ rhsso_mode }}/configuration/{{ rhsso_mode }}.xml"
+  #     state: present 
+  #     insertafter: '/>\n.*</handlers>'
+  #     regexp: '<filters><filter name="proxy-peer' 
+  #     line: '<filters><filter name="proxy-peer" class-name="io.undertow.server.handlers.ProxyPeerAddressHandler" module="io.undertow.core" /></filters>'    
+  #     backup: yes
