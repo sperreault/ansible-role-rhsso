@@ -11,9 +11,9 @@ prep:
 	virtualenv venv
 	( \
 		source venv/bin/activate; \
-		pip install ansible \
+		pip install ansible; \
+		ansible-galaxy install -r roles/requirements.yml -p ./roles/ --force \
 	)
-	ansible-galaxy install -r roles/requirements.yml -p ./roles/ --force
 	cd roles && ln -s ../../ rhsso
 
 clean:

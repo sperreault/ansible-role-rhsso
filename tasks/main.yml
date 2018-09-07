@@ -8,3 +8,15 @@
   - name: Install the rhsso packages
     include_tasks: "install_rhsso.yml"
     when: rhsso_enabled == true
+
+  - name: Start rhsso to add the admin user
+    service:
+      name: "rhsso@{{ rhsso_mode }}.service"
+      state: started
+    when: install_rhsso.changed
+  
+  - name: Add the admin user
+    command: "{{ rhsso_homedir }}/bin/add-user-keycloak.sh -u {{ rhsso_admin_user }} -p {{ rhsso_admin_password }}"
+    when: install_rhsso.changed
+
+  

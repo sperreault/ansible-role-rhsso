@@ -5,7 +5,12 @@
       state: latest
     loop: "{{ rhsso_rpm_packages }}"
     when: rhsso_installation_mode == "rpm"
-
+    register: install_rhsso
+    
+  - name: Set the home dir
+    set_fact:
+        rhsso_homedir: "{{ rhsso_rpm_homedir }}"
+        
   - name: Change the permissions on rhsso_rpm_homedir
     file:
       dest: "{{ rhsso_rpm_homedir }}"
@@ -32,7 +37,8 @@
         regexp: "<ajp-listener name" 
         line: '<ajp-listener name="ajp" socket-binding="ajp"/>'
         backup: yes
-  
+    notify: restart rhsso
+
   #
   # TODO: Not working perfectly
   #

@@ -11,6 +11,7 @@ rhsso_installation_mode: "rpm" # rpm or archive
 rhsso_selinux_policy: "targeted"
 rhsso_selinux_state: "permissive"
 rhsso_enabled: true
+rhsso_homedir: "/some/home/dir"
 #
 # To be used with redhat-subscription role from https://github.com/openstack/ansible-role-redhat-subscription
 #
